@@ -4,6 +4,8 @@ This is the documentation for configuring the P1 DSMR Reader board with ESPHome 
 
 This repository holds a custom P1UARTReaderComponent for ESPHome and contains several (example) configurations that might suite your needs for monitoring your household power, gas, and water consumptions.
 
+![Image of P1 DSMR Reader board](/docs/images/p1dsmrreader-fhd.jpg)
+
 ## 1. Prerequisites
 
 * A P1 DSMR Reader board
@@ -54,6 +56,8 @@ Please do not modify the usage of the UARTP1ReaderComponent in the lambda and le
 ### 4.3 Pushing Data to an HTTP endpoint
 
 ### 4.4 Direct REST calls
+
+https://esphome.io/web-api/index.html#rest-api
 
 ## 5. FAQ
 
