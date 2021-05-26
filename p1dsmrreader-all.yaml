@@ -78,13 +78,13 @@ sensor:
       falling_edge: INCREMENT
     update_interval: 60s
     unit_of_measurement: "dm³"
+    id: water_per_minute
 
     total:
       name: "Total Water Consumption"
-      unit_of_measurement: "m³"
+      unit_of_measurement: "dm³"
       accuracy_decimals: 3
-      filters:
-        - multiply: 0.001
+      id: water_total
 
   - platform: custom
     id: dsmr
@@ -176,12 +176,24 @@ interval:
                 X-API-Key: ${http_api_key}
               # body: "test"
               json: |-
-                root["electricity_consumed_low_tariff"] = id(electricity_consumed_low_tariff).state;
-                root["electricity_consumed_high_tariff"] = id(electricity_consumed_high_tariff).state;
-                root["electricity_produced_low_tariff"] = id(electricity_produced_low_tariff).state;
-                root["electricity_produced_high_tariff"] = id(electricity_produced_high_tariff).state;
-                root["gas_consumed"] = id(gas_consumed).state;
-                root["actual_power_consumed"] = id(actual_power_consumed).state;
-                root["actual_power_produced"] = id(actual_power_produced).state;
+                JsonObject& power = root.createNestedObject("actualPower");
+                JsonObject& electricity = root.createNestedObject("electricity");
+                JsonObject& consumed = electricity.createNestedObject("consumed");
+                JsonObject& produced = electricity.createNestedObject("produced");
+                JsonObject& water = root.createNestedObject("water");
+                consumed["lowTarrif"] = id(electricity_consumed_low_tariff).state;
+                consumed["highTariff"] = id(electricity_consumed_high_tariff).state;
+                produced["lowTariff"] = id(electricity_produced_low_tariff).state;
+                produced["highTariff"] = id(electricity_produced_high_tariff).state;
+                power["consumed"] = id(actual_power_consumed).state;
+                power["produced"] = id(actual_power_produced).state;
+                root["gas"] = id(gas_consumed).state;               
+                water["lastMinute"] = id(water_per_minute).state;
+                water["total"] = id(water_total).state;
+                root["uptime"] = id(up_time).state;
               verify_ssl: false
-
+              on_response:
+                then:
+                  # Need to do this to prevent publishing the same value twice
+                  - lambda: |-
+                      id(water_per_minute).publish_state(0.0);

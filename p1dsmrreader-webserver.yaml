@@ -5,11 +5,6 @@ substitutions:
   reboot_timeout: 1h
   update_interval: 10min
 
-  # Enable for HTTP requests (also see end of file)
-  # http_update_interval: 1min
-  # http_uri: !secret p1reader_uri
-  # http_api_key: !secret p1reader_api_key
-
 esphome:
   name: ${device}
   name_add_mac_suffix: True
@@ -31,12 +26,6 @@ esphome:
 
 <<: !include common/common.yaml
 <<: !include common/logger.yaml
-
-# Enable for HomeAssistant direct API
-# <<: !include common/api.yaml
-
-# Enable for MQTT
-# <<: !include common/mqtt.yaml
 
 # Enable to have a web server to display info
 <<: !include common/web_server.yaml
@@ -78,13 +67,13 @@ sensor:
       falling_edge: INCREMENT
     update_interval: 60s
     unit_of_measurement: "dm³"
+    id: water_per_minute
 
     total:
       name: "Total Water Consumption"
-      unit_of_measurement: "m³"
+      unit_of_measurement: "dm³"
       accuracy_decimals: 3
-      filters:
-        - multiply: 0.001
+      id: water_total
 
   - platform: custom
     id: dsmr
@@ -156,32 +145,3 @@ sensor:
       - name: "Actual Current L3"
         unit_of_measurement: A
         accuracy_decimals: 3
-
-
-# Enable for HTTP request every interval
-
-# http_request:
-
-# interval:
-#   - interval: ${http_update_interval}
-#     then:
-#       if:
-#         condition:
-#           wifi.connected:
-#         then:
-#           - http_request.post:
-#               url: ${http_uri}
-#               headers:
-#                 Content-Type: application/json
-#                 X-API-Key: ${http_api_key}
-#               # body: "test"
-#               json: |-
-#                 root["electricity_consumed_low_tariff"] = id(electricity_consumed_low_tariff).state;
-#                 root["electricity_consumed_high_tariff"] = id(electricity_consumed_high_tariff).state;
-#                 root["electricity_produced_low_tariff"] = id(electricity_produced_low_tariff).state;
-#                 root["electricity_produced_high_tariff"] = id(electricity_produced_high_tariff).state;
-#                 root["gas_consumed"] = id(gas_consumed).state;
-#                 root["actual_power_consumed"] = id(actual_power_consumed).state;
-#                 root["actual_power_produced"] = id(actual_power_produced).state;
-#               verify_ssl: false
-
