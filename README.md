@@ -60,4 +60,5 @@ Please do not modify the usage of the UARTP1ReaderComponent in the lambda and le
 
 ## 6. Credits
 
+* Thanks to [Koelio2](https://github.com/Koelie2) for aiding me with his knowledge of hardware and PCB manufacturing and supplying the tools and time to produce the P1 DSMR Reader boards.
 * Thank to [Matthijs Kooijman](https://github.com/matthijskooijman) for creating the [arduino-dsmr](https://github.com/matthijskooijman/arduino-dsmr) library
