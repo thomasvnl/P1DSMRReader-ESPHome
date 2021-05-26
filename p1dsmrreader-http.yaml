@@ -1,0 +1,187 @@
+substitutions:
+  device: p1dsmrreader
+  name: P1DSMRReader
+  location: Meterkast
+  reboot_timeout: 1h
+  update_interval: 10min
+
+  # Enable for HTTP requests (also see end of file)
+  http_update_interval: 1min
+  http_uri: !secret p1reader_uri
+  http_api_key: !secret p1reader_api_key
+
+esphome:
+  name: ${device}
+  name_add_mac_suffix: True
+  platform: ESP32
+  board: esp32dev
+  platformio_options:
+    upload_speed: 921600
+  includes:
+    - uartp1reader.h
+  libraries:
+    - "Dsmr"
+  on_boot:
+    - delay: 1000ms
+    - switch.turn_on: p1rts
+
+  on_shutdown:
+    - switch.turn_off: p1rts
+    - delay: 1000ms
+
+<<: !include common/common.yaml
+<<: !include common/logger.yaml
+
+# Enable for HomeAssistant direct API
+# <<: !include common/api.yaml
+
+# Enable for MQTT
+# <<: !include common/mqtt.yaml
+
+# Enable to have a web server to display info
+# <<: !include common/web_server.yaml
+
+status_led:
+  pin:
+    number: 27
+    inverted: True
+
+switch:
+  - !include common/switch/restart.yaml
+  - platform: gpio
+    pin: 4
+    id: p1rts
+    internal: true
+
+binary_sensor:
+  - !include common/binary_sensor/status.yaml
+
+uart:
+  baud_rate: 115200
+  rx_pin: 16
+  rx_buffer_size: 512
+  data_bits: 8
+  parity: NONE
+  stop_bits: 1
+  id: p1uart
+
+sensor:
+  - !include common/sensor/wifi-signal.yaml
+  - !include common/sensor/uptime.yaml
+
+  - platform: pulse_counter
+    name: "Water Consumption Per Minute"
+    pin: GPIO17
+    accuracy_decimals: 0
+    count_mode:
+      rising_edge: DISABLE
+      falling_edge: INCREMENT
+    update_interval: 60s
+    unit_of_measurement: "dm³"
+
+    total:
+      name: "Total Water Consumption"
+      unit_of_measurement: "m³"
+      accuracy_decimals: 3
+      filters:
+        - multiply: 0.001
+
+  - platform: custom
+    id: dsmr
+    lambda: |-
+      auto p1sensor = new UARTP1ReaderComponent(id(p1uart));
+      App.register_component(p1sensor);
+      return {p1sensor->energy_delivered_tariff1, p1sensor->energy_delivered_tariff2, p1sensor->energy_returned_tariff1, p1sensor->energy_returned_tariff2, p1sensor->electricity_tariff, p1sensor->power_delivered, p1sensor->power_returned, p1sensor->gas_delivered, p1sensor->voltage_l1, p1sensor->voltage_l2, p1sensor->voltage_l3, p1sensor->current_l1, p1sensor->current_l2, p1sensor->current_l3};
+
+    sensors:
+      - name: "Electricity Consumed Low Tariff"
+        unit_of_measurement: Wh
+        accuracy_decimals: 0
+        filters:
+          - multiply: 1000
+        id: electricity_consumed_low_tariff
+      - name: "Electricity Consumed High Tariff"
+        unit_of_measurement: Wh
+        accuracy_decimals: 0
+        filters:
+          - multiply: 1000
+        id: electricity_consumed_high_tariff
+      - name: "Electricity Produced Low Tariff"
+        unit_of_measurement: Wh
+        accuracy_decimals: 0
+        filters:
+          - multiply: 1000
+        id: electricity_produced_low_tariff
+      - name: "Electricity Produced High Tariff"
+        unit_of_measurement: Wh
+        accuracy_decimals: 0
+        filters:
+          - multiply: 1000
+        id: electricity_produced_high_tariff
+      - name: "Actual Electricity Tariff"
+        accuracy_decimals: 0
+      - name: "Actual Power Consumed"
+        unit_of_measurement: W
+        accuracy_decimals: 0
+        filters:
+          - multiply: 1000
+        id: actual_power_consumed
+      - name: "Actual Power Produced"
+        unit_of_measurement: W
+        accuracy_decimals: 0
+        filters:
+          - multiply: 1000
+        id: actual_power_produced
+      - name: "Gas Consumed"
+        unit_of_measurement: dm³
+        accuracy_decimals: 0
+        filters:
+          - multiply: 1000
+        id: gas_consumed
+      - name: "Actual Voltage L1"
+        unit_of_measurement: V
+        accuracy_decimals: 3
+      - name: "Actual Voltage L2"
+        unit_of_measurement: V
+        accuracy_decimals: 3
+      - name: "Actual Voltage L3"
+        unit_of_measurement: V
+        accuracy_decimals: 3
+      - name: "Actual Current L1"
+        unit_of_measurement: A
+        accuracy_decimals: 3
+      - name: "Actual Current L2"
+        unit_of_measurement: A
+        accuracy_decimals: 3
+      - name: "Actual Current L3"
+        unit_of_measurement: A
+        accuracy_decimals: 3
+
+
+# Enable for HTTP request every interval
+
+http_request:
+
+interval:
+  - interval: ${http_update_interval}
+    then:
+      if:
+        condition:
+          wifi.connected:
+        then:
+          - http_request.post:
+              url: ${http_uri}
+              headers:
+                Content-Type: application/json
+                X-API-Key: ${http_api_key}
+              # body: "test"
+              json: |-
+                root["electricity_consumed_low_tariff"] = id(electricity_consumed_low_tariff).state;
+                root["electricity_consumed_high_tariff"] = id(electricity_consumed_high_tariff).state;
+                root["electricity_produced_low_tariff"] = id(electricity_produced_low_tariff).state;
+                root["electricity_produced_high_tariff"] = id(electricity_produced_high_tariff).state;
+                root["gas_consumed"] = id(gas_consumed).state;
+                root["actual_power_consumed"] = id(actual_power_consumed).state;
+                root["actual_power_produced"] = id(actual_power_produced).state;
+              verify_ssl: false
+
