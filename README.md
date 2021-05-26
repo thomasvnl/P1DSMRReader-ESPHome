@@ -29,18 +29,18 @@ You will only need to fill in secrets that are used by your chosen configuration
 
 The ESPHome website has a very straightforward guide on how to install the necessary packages. If you haven't installed ESPHome yet please navigate to [ESPHome/Getting Started#Installation](https://esphome.io/guides/getting_started_command_line.html#installation) and follow the instructons before proceeding.
 
-### 2.3 Creating a Configuration
+### 2.3 Using or Creating a Configuration
 
-The repository holds a few (example) configurations, some with an extension indicating which communication components they use for communicating the telemetry data.
+The repository holds a few (example) configurations, some with an extension indicating which communication component they use for communicating the telemetry data. These configurations can be used and are compatible as-is, but can of course also be modified based on personal needs.
 
 The following configurations are supplied and should be a good fit/good starting point for you to get going:
 
 * `p1dsmrreader-all.yaml` Contains the full set of components to communicate telemetry via API/Hass, HTTP Request, MQTT, and Web/REST server
-* `p1dsmrreader-hass.yaml` Contains only the API/Hass component to communicate the telemetry
-* `p1dsmrreader-http.yaml` Contains only the HTTP Request component to communicate the telemetry
-* `p1dsmrreader-mqtt.yaml` Contains only the MQTT component to communicate the telemetry
+* `p1dsmrreader-hass.yaml` Contains only the API/Hass component
+* `p1dsmrreader-http.yaml` Contains only the HTTP Request component
+* `p1dsmrreader-mqtt.yaml` Contains only the MQTT component
 
-Please do not modify the usage of the UARTP1ReaderComponent in the lambda and leave the GPIO switch for pin 4 (P1 Request To Send) as is and internal to not disturb the decoding of DSMR messages.
+Please do not modify the usage of the UARTP1ReaderComponent in the lambda and leave the GPIO switch for pin 4 (P1 Request To Send) as-is and internal to not disturb the decoding of DSMR messages. If doing so, you are doing this at your own risk.
 
 ## 3. Compiling & Uploading
 
@@ -57,3 +57,7 @@ Please do not modify the usage of the UARTP1ReaderComponent in the lambda and le
 ## 5. FAQ
 
 * _Sometimes after an OTA update the device stalls at shutdown/boot up_: You will need to manually reset the device when this happens. At present it is not clear why the firmware does not continue. After resetting the device it works fine, so for now this is a minor inconvenience.
+
+## 6. Credits
+
+* Thank to [Matthijs Kooijman](https://github.com/matthijskooijman) for creating the [arduino-dsmr](https://github.com/matthijskooijman/arduino-dsmr) library
