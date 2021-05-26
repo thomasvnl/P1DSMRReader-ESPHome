@@ -57,6 +57,8 @@ Please do not modify the usage of the UARTP1ReaderComponent in the lambda and le
 
 ### 4.3 Pushing Data to an HTTP endpoint
 
+![JSON Payload](/docs/images/p1dsmrreader-http-json-msg.png)
+
 ### 4.4 Direct REST calls
 
 https://esphome.io/web-api/index.html#rest-api
