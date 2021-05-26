@@ -63,7 +63,8 @@ https://esphome.io/web-api/index.html#rest-api
 
 * _Sometimes after an OTA update the device stalls at shutdown/boot up_: You will need to manually reset the device when this happens. At present it is not clear why the firmware does not continue. After resetting the device it works fine, so for now this is a minor inconvenience.
 
-## 6. Credits
+## 6. Attribution & Thanks
 
 * Thanks to [Koelie2](https://github.com/Koelie2) for aiding me with his knowledge of hardware and PCB manufacturing and supplying the tools and time to produce the P1 DSMR Reader boards.
-* Thank to [Matthijs Kooijman](https://github.com/matthijskooijman) for creating the [arduino-dsmr](https://github.com/matthijskooijman/arduino-dsmr) library
+* Thank to [Matthijs Kooijman](https://github.com/matthijskooijman) for creating the [arduino-dsmr](https://github.com/matthijskooijman/arduino-dsmr) library.
+* Thanks to [AlexMekkering](https://github.com/AlexMekkering) for providing the [esphome-config](https://github.com/AlexMekkering/esphome-config) repository with example yaml structure and basic sensor configurations.
