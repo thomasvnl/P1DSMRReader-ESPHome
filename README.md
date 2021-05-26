@@ -43,7 +43,7 @@ The following configurations are supplied and should be a good fit/good starting
 * `p1dsmrreader-mqtt.yaml` Contains only the MQTT component
 * `p1dsmrreader-webserver.yaml` Contains only the Web Server component
 
-Please do not modify the usage of the UARTP1ReaderComponent in the lambda and leave the GPIO switch for pin 4 (P1 Request To Send) as-is and internal to not disturb the decoding of DSMR messages. If doing so, you are doing this at your own risk.
+Please do not modify the usage of the UARTP1ReaderComponent in the lambda and leave the GPIO switch for pin 4 (P1 Request To Send) as-is and internal to not disturb the decoding of DSMR messages. If you do modify this functionality you do so at your own risk.
 
 ## 3. Compiling & Uploading
 
