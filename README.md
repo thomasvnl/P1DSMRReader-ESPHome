@@ -37,7 +37,7 @@ The repository holds a few (example) configurations, some with an extension indi
 
 The following configurations are supplied and should be a good fit/good starting point for you to get going:
 
-* `p1dsmrreader-all.yaml` Contains the full set of components to communicate telemetry via API/Hass, HTTP Request, MQTT, and Web/REST server
+* `p1dsmrreader-all.yaml` Contains the full set of components to communicate telemetry via API/Hass, HTTP Request, MQTT, and Web/REST server. For demonstration purposes only, using different ways of communication could bite each other.
 * `p1dsmrreader-hass.yaml` Contains only the API/Hass component
 * `p1dsmrreader-http.yaml` Contains only the HTTP Request component
 * `p1dsmrreader-mqtt.yaml` Contains only the MQTT component
