@@ -53,6 +53,8 @@ Please do not modify the usage of the UARTP1ReaderComponent in the lambda and le
 
 ### 4.2 Via MQTT
 
+![Animation of MQTT topics](/docs/images/p1dsmrreader-mqtt-topics.gif)
+
 ### 4.3 Pushing Data to an HTTP endpoint
 
 ### 4.4 Direct REST calls
