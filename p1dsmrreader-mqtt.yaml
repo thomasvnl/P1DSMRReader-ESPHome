@@ -60,7 +60,10 @@ sensor:
 
   - platform: pulse_counter
     name: "Water Consumption Per Minute"
-    pin: GPIO17
+    pin: 
+      number: GPIO17
+      mode: INPUT_PULLUP
+    internal_filter: 13us
     accuracy_decimals: 0
     count_mode:
       rising_edge: DISABLE
@@ -68,6 +71,8 @@ sensor:
     update_interval: 60s
     unit_of_measurement: "dm³"
     id: water_per_minute
+    filters:
+      - debounce: 1.5s # Averages a 2.5m³/h max flow rate/QN value (most water meters)
 
     total:
       name: "Total Water Consumption"

@@ -31,6 +31,7 @@ using DsmrData = ParsedData <
 class UARTP1ReaderComponent : public PollingComponent {
 	private:
 		P1Reader *reader;
+		UARTComponent *uart_bus;
 	public: 
 		Sensor *energy_delivered_tariff1 = new Sensor();
 		Sensor *energy_delivered_tariff2 = new Sensor();
@@ -51,16 +52,36 @@ class UARTP1ReaderComponent : public PollingComponent {
 		Sensor *gas_delivered = new Sensor();
 
 		UARTP1ReaderComponent(UARTComponent *uart_bus) : PollingComponent(500) {
-
+			this->uart_bus = uart_bus;
 			this->reader = new P1Reader(uart_bus, -1);
 		}
 
 		void setup() override {
 			this->reader->enable(false);
+
+			energy_delivered_tariff1->state = -1;
+			energy_delivered_tariff2->state = -1;
+			energy_returned_tariff1->state = -1;
+			energy_returned_tariff2->state = -1;
+			electricity_tariff->state = -1;
+			power_delivered->state = -1;
+			power_returned->state = -1;
+			voltage_l1->state = -1;
+			voltage_l2->state = -1;
+			voltage_l3->state = -1;
+			current_l1->state = -1;
+			current_l2->state = -1;
+			current_l3->state = -1;
+			power_delivered_l1->state = -1;
+			power_delivered_l2->state = -1;
+			power_delivered_l3->state = -1;
+			gas_delivered->state = -1;
 		}
 
 		void update() override {
-			reader->loop();
+			if (digitalRead(4) == HIGH && uart_bus->available() > 0) {
+				reader->loop();
+			}
 			// Check if data available
 			if (reader->available()) {
 				DsmrData data;
