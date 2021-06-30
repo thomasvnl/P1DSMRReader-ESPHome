@@ -58,13 +58,31 @@ uart:
   stop_bits: 1
   id: p1uart
 
+text_sensor:
+  - platform: template
+    id: "p1version"
+    name: "DSMR Version"
+    #lambda: "return {};"
+
+  - platform: template
+    id: "p1timestamp"
+    name: "Electricity Timestamp"
+    #lambda: "return {};"
+
+  - platform: template
+    id: "p1gastimestamp"
+    name: "Gas Timestamp"
+
 sensor:
   - !include common/sensor/wifi-signal.yaml
   - !include common/sensor/uptime.yaml
 
   - platform: pulse_counter
     name: "Water Consumption Per Minute"
-    pin: GPIO17
+    pin: 
+      number: GPIO17
+      mode: INPUT
+    internal_filter: 13us
     accuracy_decimals: 0
     count_mode:
       rising_edge: DISABLE
@@ -72,80 +90,219 @@ sensor:
     update_interval: 60s
     unit_of_measurement: "dm³"
     id: water_per_minute
+    filters:
+      - throttle: 1.5s
 
     total:
       name: "Total Water Consumption"
       unit_of_measurement: "dm³"
-      accuracy_decimals: 3
+      accuracy_decimals: 0
       id: water_total
 
-  - platform: custom
-    id: dsmr
-    lambda: |-
-      auto p1sensor = new UARTP1ReaderComponent(id(p1uart));
-      App.register_component(p1sensor);
-      return {p1sensor->energy_delivered_tariff1, p1sensor->energy_delivered_tariff2, p1sensor->energy_returned_tariff1, p1sensor->energy_returned_tariff2, p1sensor->electricity_tariff, p1sensor->power_delivered, p1sensor->power_returned, p1sensor->gas_delivered, p1sensor->voltage_l1, p1sensor->voltage_l2, p1sensor->voltage_l3, p1sensor->current_l1, p1sensor->current_l2, p1sensor->current_l3};
+  - platform: template
+    id: "p1electricitytariff"
+    name: "Electricity Tariff"
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 60s
 
-    sensors:
-      - name: "Electricity Consumed Low Tariff"
-        unit_of_measurement: Wh
-        accuracy_decimals: 0
-        filters:
-          - multiply: 1000
-        id: electricity_consumed_low_tariff
-      - name: "Electricity Consumed High Tariff"
-        unit_of_measurement: Wh
-        accuracy_decimals: 0
-        filters:
-          - multiply: 1000
-        id: electricity_consumed_high_tariff
-      - name: "Electricity Produced Low Tariff"
-        unit_of_measurement: Wh
-        accuracy_decimals: 0
-        filters:
-          - multiply: 1000
-        id: electricity_produced_low_tariff
-      - name: "Electricity Produced High Tariff"
-        unit_of_measurement: Wh
-        accuracy_decimals: 0
-        filters:
-          - multiply: 1000
-        id: electricity_produced_high_tariff
-      - name: "Actual Electricity Tariff"
-        accuracy_decimals: 0
-      - name: "Actual Power Consumed"
-        unit_of_measurement: W
-        accuracy_decimals: 0
-        filters:
-          - multiply: 1000
-        id: actual_power_consumed
-      - name: "Actual Power Produced"
-        unit_of_measurement: W
-        accuracy_decimals: 0
-        filters:
-          - multiply: 1000
-        id: actual_power_produced
-      - name: "Gas Consumed"
-        unit_of_measurement: dm³
-        accuracy_decimals: 0
-        filters:
-          - multiply: 1000
-        id: gas_consumed
-      - name: "Actual Voltage L1"
-        unit_of_measurement: V
-        accuracy_decimals: 3
-      - name: "Actual Voltage L2"
-        unit_of_measurement: V
-        accuracy_decimals: 3
-      - name: "Actual Voltage L3"
-        unit_of_measurement: V
-        accuracy_decimals: 3
-      - name: "Actual Current L1"
-        unit_of_measurement: A
-        accuracy_decimals: 3
-      - name: "Actual Current L2"
-        unit_of_measurement: A
-        accuracy_decimals: 3
-      - name: "Actual Current L3"
-        unit_of_measurement: A
-        accuracy_decimals: 3
+  - platform: template
+    id: "p1electricityconsumedlowtariff"
+    name: "Electricity Consumed Low Tariff"
+    unit_of_measurement: Wh
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1electricityconsumedhightariff"
+    name: "Electricity Consumed High Tariff"
+    unit_of_measurement: Wh
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1electricityproducedlowtariff"
+    name: "Electricity Produced Low Tariff"
+    unit_of_measurement: Wh
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1electricityproducedhightariff"
+    name: "Electricity Produced High Tariff"
+    unit_of_measurement: Wh
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1actualpowerconsumed"
+    name: "Actual Power Consumed"
+    unit_of_measurement: W
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1actualpowerproduced"
+    name: "Actual Power Produced"
+    unit_of_measurement: W
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1gasconsumed"
+    name: "Gas Consumed"
+    unit_of_measurement: "dm³"
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 30s
+
+  - platform: template
+    id: "p1powerconsumedl1"
+    name: "Power Consumed L1"
+    unit_of_measurement: W
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1powerconsumedl2"
+    name: "Power Consumed L2"
+    unit_of_measurement: W
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1powerconsumedl3"
+    name: "Power Consumed L3"
+    unit_of_measurement: W
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1powerproducedl1"
+    name: "Power Produced L1"
+    unit_of_measurement: W
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1powerproducedl2"
+    name: "Power Produced L2"
+    unit_of_measurement: W
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1powerproducedl3"
+    name: "Power Produced L3"
+    unit_of_measurement: W
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1voltagel1"
+    name: "Voltage L1"
+    accuracy_decimals: 1
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1voltagel2"
+    name: "Voltage L2"
+    accuracy_decimals: 1
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1voltagel3"
+    name: "Voltage L3"
+    accuracy_decimals: 1
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1currentl1"
+    name: "Current L1"
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1currentl2"
+    name: "Current L2"
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+  - platform: template
+    id: "p1currentl3"
+    name: "Current L3"
+    accuracy_decimals: 0
+    filters:
+      - or:
+        - delta: 1.0
+        - throttle: 10s
+
+custom_component:
+  id: dsmr
+  lambda: |-
+    auto p1sensor = new UARTP1ReaderComponent(
+      id(p1uart), id(p1version), id(p1timestamp), id(p1electricitytariff), 
+      id(p1electricityconsumedlowtariff), id(p1electricityconsumedhightariff),
+      id(p1electricityproducedlowtariff), id(p1electricityproducedhightariff),
+      id(p1actualpowerconsumed), id(p1actualpowerproduced), id(p1gastimestamp),
+      id(p1gasconsumed), id(p1powerconsumedl1), id(p1powerconsumedl2), id(p1powerconsumedl3),
+      id(p1powerproducedl1), id(p1powerproducedl2), id(p1powerproducedl3),
+      id(p1voltagel1), id(p1voltagel2), id(p1voltagel3), id(p1currentl1), id(p1currentl2), id(p1currentl3)
+    );
+    App.register_component(p1sensor);
+    return {p1sensor};
