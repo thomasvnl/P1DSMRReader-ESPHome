@@ -180,7 +180,7 @@ sensor:
 
   - platform: template
     id: "p1powerconsumedl1"
-    name: "Power Consumed L1"
+    name: "Actual Power Consumed L1"
     unit_of_measurement: W
     accuracy_decimals: 0
     filters:
@@ -190,7 +190,7 @@ sensor:
 
   - platform: template
     id: "p1powerconsumedl2"
-    name: "Power Consumed L2"
+    name: "Actual Power Consumed L2"
     unit_of_measurement: W
     accuracy_decimals: 0
     filters:
@@ -200,7 +200,7 @@ sensor:
 
   - platform: template
     id: "p1powerconsumedl3"
-    name: "Power Consumed L3"
+    name: "Actual Power Consumed L3"
     unit_of_measurement: W
     accuracy_decimals: 0
     filters:
@@ -210,7 +210,7 @@ sensor:
 
   - platform: template
     id: "p1powerproducedl1"
-    name: "Power Produced L1"
+    name: "Actual Power Produced L1"
     unit_of_measurement: W
     accuracy_decimals: 0
     filters:
@@ -220,7 +220,7 @@ sensor:
 
   - platform: template
     id: "p1powerproducedl2"
-    name: "Power Produced L2"
+    name: "Actual Power Produced L2"
     unit_of_measurement: W
     accuracy_decimals: 0
     filters:
@@ -230,7 +230,7 @@ sensor:
 
   - platform: template
     id: "p1powerproducedl3"
-    name: "Power Produced L3"
+    name: "Actual Power Produced L3"
     unit_of_measurement: W
     accuracy_decimals: 0
     filters:
@@ -240,7 +240,7 @@ sensor:
 
   - platform: template
     id: "p1voltagel1"
-    name: "Voltage L1"
+    name: "Actual Voltage L1"
     accuracy_decimals: 1
     filters:
       - or:
@@ -249,7 +249,7 @@ sensor:
 
   - platform: template
     id: "p1voltagel2"
-    name: "Voltage L2"
+    name: "Actual Voltage L2"
     accuracy_decimals: 1
     filters:
       - or:
@@ -258,7 +258,7 @@ sensor:
 
   - platform: template
     id: "p1voltagel3"
-    name: "Voltage L3"
+    name: "Actual Voltage L3"
     accuracy_decimals: 1
     filters:
       - or:
@@ -267,7 +267,7 @@ sensor:
 
   - platform: template
     id: "p1currentl1"
-    name: "Current L1"
+    name: "Actual Current L1"
     accuracy_decimals: 0
     filters:
       - or:
@@ -276,7 +276,7 @@ sensor:
 
   - platform: template
     id: "p1currentl2"
-    name: "Current L2"
+    name: "Actual Current L2"
     accuracy_decimals: 0
     filters:
       - or:
@@ -285,7 +285,7 @@ sensor:
 
   - platform: template
     id: "p1currentl3"
-    name: "Current L3"
+    name: "Actual Current L3"
     accuracy_decimals: 0
     filters:
       - or:
