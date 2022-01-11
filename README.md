@@ -31,6 +31,8 @@ You will only need to fill in secrets that are used by your chosen configuration
 
 The ESPHome website has a very straightforward guide on how to install the necessary packages. If you haven't installed ESPHome yet please navigate to [ESPHome/Getting Started#Installation](https://esphome.io/guides/getting_started_command_line.html#installation) and follow the instructons before proceeding.
 
+More recent versions of ESPHome [changed something](https://github.com/oxan/esphome-stream-server/issues/6) that made ESPHome no longer backwards compatible. You need to install any version lower than 2021.10.0. For example: `pip3 install esphome==2021.9.3`
+
 ### 2.3 Using or Creating a Configuration
 
 The repository holds a few (example) configurations, some with an extension indicating which communication component they use for communicating the telemetry data. These configurations can be used and are compatible as-is, but can of course also be modified based on personal needs.
@@ -46,6 +48,10 @@ The following configurations are supplied and should be a good fit/good starting
 Please do not modify the usage of the UARTP1ReaderComponent in the lambda and leave the GPIO switch for pin 4 (P1 Request To Send) as-is and internal to not disturb the decoding of DSMR messages. If you do modify this functionality you do so at your own risk.
 
 ## 3. Compiling & Uploading
+
+In the same folder as the configurations, execute `esphome run` followed by the filename of the chosen configuration. For example: `esphome run p1dsmrreader-mqtt.yaml`. After the build process is done you get to choose the com port to upload to. 
+
+If you get: `A fatal error occurred: Failed to connect to ESP32: Invalid head of packet (0x1B)` then you need to press the flash button when the uploading process starts. This is indicated by some of the lights flashing on the ftdi programmer.
 
 ## 4. Telemetry
 
